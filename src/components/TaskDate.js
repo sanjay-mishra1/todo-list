@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import moment from "moment";
 import { FaSpaceShuttle, FaSun, FaRegPaperPlane } from "react-icons/fa";
 import PropTypes from "prop-types";

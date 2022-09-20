@@ -8,8 +8,6 @@ import {
 } from "react-router-dom";
 import AuthHome from "./auth/authHome";
 import Home from "./pages/home";
-import { createStore } from "redux";
-import { userReducer } from "./store/reducer";
 import { Provider } from "react-redux";
 import store from "./store/store";
 

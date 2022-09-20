@@ -4,11 +4,7 @@ import { getSession } from "../server/auth";
 import { getProjectList } from "../store/actioncreator";
 import { Header } from "../components/layout/Header";
 import { Content } from "../components/layout/Content";
-import {
-  ProjectsProvider,
-  SelectedProjectProvider,
-  useProjectsValue,
-} from "../context";
+import { ProjectsProvider, SelectedProjectProvider } from "../context";
 function Home(props) {
   const [user, setUser] = useState();
   const [openMenuBar, setOpenMenuBar] = useState(false);
@@ -36,6 +32,7 @@ function Home(props) {
           <ProjectsProvider>
             <main
               data-testid="application"
+              style={{ display: "flex", flexDirection: "column" }}
               className={darkMode ? "darkmode" : undefined}
             >
               <Header
@@ -46,10 +43,7 @@ function Home(props) {
                 darkMode={darkMode}
                 setDarkMode={setDarkMode}
               />
-              <br />
-              <br />
-              <br />
-              <br />
+
               <Content
                 openMenuBar={openMenuBar}
                 handleMenuBarOpen={handleMenuBarOpen}

@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { logout } from "../../server/auth";
 import SearchTask from "../SearchTask";
-import { screenSizes } from "../../util/helper";
 
 export const Header = ({
   darkMode,

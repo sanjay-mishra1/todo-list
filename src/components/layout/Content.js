@@ -3,26 +3,7 @@ import { Sidebar } from "./Sidebar";
 import { Tasks } from "../Tasks";
 import { useProjectsValue } from "../../context";
 import RightSidebar from "../RightSidebar";
-import { MdDoneAll } from "react-icons/md";
-import {
-  BiChevronLeft,
-  BiChevronRight,
-  BiLeftArrow,
-  BiRightArrow,
-} from "react-icons/bi";
-import styled from "@emotion/styled";
-import MuiAppBar from "@mui/material/AppBar";
-import { useTheme } from "@emotion/react";
-import { Box } from "@mui/system";
-import {
-  CssBaseline,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  Toolbar,
-} from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 
 export const Content = ({
   user,
@@ -37,8 +18,9 @@ export const Content = ({
   React.useEffect(() => {
     setProjects(projectList);
   }, [projectList]);
+  let small = useMediaQuery("(max-width: 930px)");
   return (
-    <section style={{ right: 0, paddingTop: "19em" }} className="content">
+    <section style={small ? { paddingTop: "3em" } : null} className="content">
       <Sidebar
         uid={user.uid}
         openMenubar={openMenuBar}

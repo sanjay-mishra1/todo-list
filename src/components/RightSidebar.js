@@ -19,10 +19,7 @@ import { useTasks } from "../hooks";
 import { useProjectsValue } from "../context";
 import { getProjectData } from "../helpers";
 import { AddTask } from "./AddTask";
-import {
-  pickTextColorBasedOnBgColorAdvanced,
-  screenSizes,
-} from "../util/helper";
+import { pickTextColorBasedOnBgColorAdvanced } from "../util/helper";
 import { MdDoneAll } from "react-icons/md";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { NoTask } from "./NoTask";

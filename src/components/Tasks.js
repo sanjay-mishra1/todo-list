@@ -114,7 +114,9 @@ export const Tasks = ({ uid }) => {
             </ListItemButton>
           </li>
         ))}
-        {(!tasks || !tasks.length) && <NoTask />}
+        {(!tasks || !tasks.length) && (
+          <NoTask selectedProject={selectedProject} />
+        )}
       </>
     );
   };

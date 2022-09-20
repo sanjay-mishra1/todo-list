@@ -21,8 +21,18 @@ export const Sidebar = ({ uid, openMenubar, handleMenubar }) => {
       data-testid="sidebar"
       style={
         openMenubar
-          ? { overflow: "auto", display: "block", zIndex: 1, paddingTop: "4em" }
-          : { overflow: "auto", paddingTop: "4em" }
+          ? {
+              overflow: "auto",
+              display: "block",
+              zIndex: 1,
+              left: 0,
+              // paddingTop: "4em"
+            }
+          : {
+              overflow: "auto",
+              left: 0,
+              // paddingTop: "4em"
+            }
       }
     >
       <ul className="sidebar__generic">

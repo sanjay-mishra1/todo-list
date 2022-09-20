@@ -1,5 +1,5 @@
 $folderName=Split-Path -Path (Get-Location) -Leaf
-$destinationFolderPath="D:\test\DestinationFolder\"+$folderName
+$destinationFolderPath="D:\react\MetaApps\firebase-deploy\"+$folderName
 if (![System.IO.Directory]::Exists($destinationFolderPath))
 {
  mkdir $destinationFolderPath
@@ -11,4 +11,4 @@ if (![System.IO.Directory]::Exists($destinationFolderPath))
 }
   mkdir $destinationFolderPath
 
-Move-Item "./build" -Destination $destinationFolderPath -force
+Move-Item "./build/" -Destination $destinationFolderPath -force

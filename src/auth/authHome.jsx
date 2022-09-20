@@ -13,7 +13,7 @@ export class AuthHome extends Component {
     document.title = "SanjayApps Auth";
     if (!this.state.user) getSession(this.setUser, false);
     else {
-      if (!window.location.href.includes("auth")) window.location.href = "/";
+      if (window.location.href.includes("auth")) window.location.href = "/";
     }
     //console.log("auth user", this.state.user);
     return (
