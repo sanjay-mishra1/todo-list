@@ -1,5 +1,10 @@
 import { deleteArrayElement } from "../util/helper";
-import { ADD_PROJECT, DELETE_PROJECT, PROJECT_LIST } from "./actiontypes";
+import {
+  ADD_PROJECT,
+  DELETE_PROJECT,
+  PROJECT_LIST,
+  UPDATE_PROJECT,
+} from "./actiontypes";
 
 let defaultUserState = {
   projectList: null,
@@ -23,7 +28,7 @@ export const taskReducer = (state = defaultUserState, action) => {
 
     state = { ...state, projectList: [...temp] };
     return state;
-  } else if (DELETE_PROJECT) {
+  } else if (action.type === DELETE_PROJECT) {
     let payload = action.payload;
     //console.log(state);
     let temp = state.projectList;
@@ -38,6 +43,18 @@ export const taskReducer = (state = defaultUserState, action) => {
     }
     //console.log("temp", temp, state.projectList);
 
+    return state;
+  } else if (action.type === UPDATE_PROJECT) {
+    let payload = action.payload;
+    console.log(state);
+    let temp = state.projectList;
+    let index = temp.findIndex((item) => item.docId === payload.docId);
+    if (index !== -1) {
+      temp[index].name = payload.name;
+      temp[index].color = payload.color;
+      state = { ...state, projectList: [...temp] };
+    }
+    console.log("updated project", temp, state);
     return state;
   }
   return state;

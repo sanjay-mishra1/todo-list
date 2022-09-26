@@ -1,6 +1,11 @@
 import moment from "moment/moment";
 import database from "../firebase";
-import { ADD_PROJECT, DELETE_PROJECT, PROJECT_LIST } from "./actiontypes";
+import {
+  ADD_PROJECT,
+  DELETE_PROJECT,
+  PROJECT_LIST,
+  UPDATE_PROJECT,
+} from "./actiontypes";
 export const getProjectList = () => (dispatch) => {
   //console.log("inside project action");
   database
@@ -51,6 +56,25 @@ export const deleteProject = (docId, successFunction) => (dispatch) => {
       dispatch({
         type: DELETE_PROJECT,
         payload: docId,
+      });
+      successFunction();
+    })
+    .catch((error) => {
+      //console.log("Deleted project failed " + error);
+    });
+};
+export const updateProjectDetails = (field, successFunction) => (dispatch) => {
+  let docId = field.docId;
+  delete field["docId"];
+  database
+    .collection("projects")
+    .doc(docId)
+    .update(field)
+    .then(() => {
+      console.log("updated project successfully " + docId);
+      dispatch({
+        type: UPDATE_PROJECT,
+        payload: { ...field, docId: docId },
       });
       successFunction();
     })

@@ -2,8 +2,22 @@ export const collatedTasks = [
   { key: "INBOX", name: "Inbox" },
   { key: "TODAY", name: "Today" },
   { key: "NEXT_7", name: "Next 7 Days" },
+  { key: "PREVIOUS", name: "Previous" },
 ];
-
+export const priority = [
+  { key: "P1", color: "#d1453b", name: "Priority P1" },
+  { key: "P2", color: "#eb8909", name: "Priority P2" },
+  { key: "P3", color: "#246fe0", name: "Priority P3" },
+  { key: "P4", color: "#666", name: "Priority P4" },
+];
+export const ViewType = [
+  { name: "Project", key: "projectId" },
+  { name: "Date Added", key: "createdDateCustom" },
+  { name: "Completed On", key: "completedOnCustom" },
+  { name: "Priority", key: "priorityCustom" },
+  { name: "Due Date", key: "dateCustom" },
+  { name: "None", key: "none" },
+];
 export const colors = [
   "#000000",
   "#0C090A",
@@ -553,4 +567,36 @@ export const colors = [
   "#FAF5EF",
   "#FFFAF0",
   "#FFFFF0",
+];
+
+export const homePageData = [
+  {
+    title: `Add tasks like “Read work emails every day at 10am” to fill your to-do list in seconds using TodoList’s 
+  powerful natural language recognition and recurring dates.`,
+    icon: "/images/addTask.png",
+  },
+  {
+    title: `A truly cross platform task management app. Whether you're at home using the desktop app or are using the mobile app on the go you can access your task list and stay organized.  `,
+    icon: "/images/crossPlatform.png",
+  },
+  {
+    title:
+      "Small steps every day add up to big achievements over time. Set daily and weekly goals, and visualize your productivity trends.",
+    icon: "/images/efficiency.png",
+  },
+  {
+    title: `Your to-do lists are automatically sorted into Today, Upcoming and custom Filter views to help you focus on your most important things.`,
+    icon: "/images/sortedData.png",
+  },
+
+  {
+    title:
+      "Break tasks down into simple steps, add due dates, and set reminders for your daily checklist to keep you on track.  ",
+    icon: "/images/pieces.png",
+  },
+  {
+    title:
+      "Group your daily task into different projects to maintain and organize  your daily activity more efficiently.",
+    icon: "/images/list.png",
+  },
 ];

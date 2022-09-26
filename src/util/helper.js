@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import { priority, ViewType } from "../constants";
 
 export const setUserGlobalInfo = ({ uid, email, image, name }) => {
   if (typeof window !== "undefined") {
@@ -87,3 +88,44 @@ export function pickTextColorBasedOnBgColorAdvanced(
   var L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
   return L > 0.179 ? darkColor : lightColor;
 }
+
+export const getPriorityColor = (priorityKey) => {
+  let temp = priority.findIndex((item) => item.key === priorityKey);
+  if (temp !== -1) return priority[temp].color;
+  else {
+    let temp2 = priority[priority.length - 1];
+    return temp2.color;
+  }
+};
+export const getPriorityName = (priorityKey) => {
+  let temp = priority.findIndex((item) => item.key === priorityKey);
+  if (temp !== -1) return priority[temp].name;
+  else {
+    return "";
+  }
+};
+
+export const getViewTypeName = (key) => {
+  let temp = ViewType.findIndex((item) => item.key === key);
+  if (temp !== -1) return ViewType[temp].name;
+  else {
+    return "";
+  }
+};
+export const groupData = (tasks, childId) => {
+  return tasks.reduce(function (results, taskSection) {
+    (results[taskSection[childId]] = results[taskSection[childId]] || []).push(
+      taskSection
+    );
+    return results;
+  }, {});
+};
+export const getDefaultAuthPage = (page) => {
+  let tempPage = page ?? "login";
+  let tempUrl = window.location.href.split("?");
+  if (tempUrl.length > 1) {
+    const url = new URLSearchParams(tempUrl[1]);
+    tempPage = url.get("page") ?? "login";
+  }
+  return tempPage;
+};

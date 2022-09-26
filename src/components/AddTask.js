@@ -9,6 +9,9 @@ import { TaskDate } from "./TaskDate";
 import database from "../firebase";
 import { Button, Checkbox, Divider, Paper } from "@mui/material";
 import { getProjectData } from "../helpers";
+import { PriorityOverlay } from "./PriorityOverlay";
+import { IoMdFlag } from "react-icons/io";
+import { getPriorityColor } from "../util/helper";
 
 export const AddTask = ({
   showAddTaskMain = true,
@@ -32,6 +35,8 @@ export const AddTask = ({
   const { selectedProject } = useSelectedProjectValue();
   const [project, setProject] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [ShowPriorityOverlay, setShowPriorityOverlay] = useState(false);
+  const [priorityName, setPriorityName] = useState("");
   //console.log("selected project", selectedProject, projects, defaultTask);
   React.useEffect(() => {
     if (projects) {
@@ -42,6 +47,10 @@ export const AddTask = ({
       } else {
         setProject("");
         setProjectName("");
+        setTaskDate("");
+        setPriorityName("");
+        if (selectedProject === "TODAY")
+          setTaskDate(moment().format("DD/MM/YYYY"));
       }
     }
   }, [selectedProject, projects]);
@@ -52,6 +61,7 @@ export const AddTask = ({
       setProject(defaultTask.projectId);
       setProjectName(defaultTask.name);
       setTaskDate(defaultTask.date);
+      setPriorityName(defaultTask.priority ?? "");
       setShowMain(true);
     }
   }, [defaultTask]);
@@ -76,6 +86,7 @@ export const AddTask = ({
       archived: isTaskCompleted,
       task,
       date: collatedDate || taskDate,
+      priority: priorityName,
     };
     if (defaultTask) {
       // default not have completedOn field and we clicked on checkbox to make it complete
@@ -107,6 +118,7 @@ export const AddTask = ({
               task,
               date: collatedDate || taskDate,
               userId: uid,
+              priority: priorityName,
               createdAt: moment.now(),
             })
             .then(() => {
@@ -131,6 +143,18 @@ export const AddTask = ({
         hideParentBox();
       });
   };
+  const openAddTaskView = () => {
+    setTaskDate("");
+    setPriorityName("");
+    setShowMain(!showMain);
+    if (selectedProject === "TODAY") setTaskDate(moment().format("DD/MM/YYYY"));
+    setTimeout(() => {
+      if (!showMain)
+        document.getElementById("add-task-button-container").scrollIntoView({
+          behavior: "smooth",
+        });
+    }, 50);
+  };
   return !uid ? (
     <div>User not found in AddTask</div>
   ) : (
@@ -142,7 +166,7 @@ export const AddTask = ({
         <div
           className="add-task__shallow"
           data-testid="show-main-action"
-          onClick={() => setShowMain(!showMain)}
+          onClick={openAddTaskView}
           onKeyDown={(e) => {
             if (e.key === "Enter") setShowMain(!showMain);
           }}
@@ -204,7 +228,11 @@ export const AddTask = ({
             defaultDate={taskDate}
             setShowTaskDate={setShowTaskDate}
           />
-
+          <PriorityOverlay
+            setPriorityName={setPriorityName}
+            setShowPriorityOverlay={setShowPriorityOverlay}
+            showPriorityOverlay={ShowPriorityOverlay}
+          />
           {defaultTask && (
             <>
               <Paper
@@ -347,6 +375,36 @@ export const AddTask = ({
                 {taskDate ? taskDate : "Select Date"}
               </p>
             </Button>
+
+            <Button
+              onClick={() => setShowPriorityOverlay(!ShowPriorityOverlay)}
+              fullWidth
+              size="small"
+              variant="outlined"
+              style={{
+                height: 40,
+                marginBottom: 10,
+                border: "1px solid rgb(221 221 221)",
+                textTransform: "capitalize",
+                textAlign: "start",
+                color: "black",
+              }}
+              color="primary"
+              endIcon={
+                <span
+                  className="add-task__date"
+                  data-testid="show-task-date-overlay"
+                  tabIndex={0}
+                >
+                  <IoMdFlag color={getPriorityColor(priorityName)} />
+                </span>
+              }
+            >
+              <p style={{ width: "100%" }}>
+                {priorityName ? priorityName : "Select Priority"}
+              </p>
+            </Button>
+
             {defaultTask && (
               <Button
                 onClick={() => setIsTaskCompleted(!isTaskCompleted)}
@@ -385,6 +443,7 @@ export const AddTask = ({
             <Button
               type="button"
               color="primary"
+              id="add-task-button-container"
               variant="contained"
               style={{ textTransform: "capitalize" }}
               data-testid="add-task"
@@ -428,6 +487,12 @@ export const AddTask = ({
             )}
           </Paper>
         </div>
+      )}
+      {showMain && (
+        <>
+          <br />
+          <br />
+        </>
       )}
     </div>
   );

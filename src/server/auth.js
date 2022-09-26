@@ -9,7 +9,7 @@ export const getSession = (setUser, autoLogin = false) => {
       if (autoLogin) {
         //console.log("auto login initiated");
         login();
-      }
+      } else setUser({ uid: "", email: "" });
     } else {
       let userData = {
         email: user.email,
@@ -23,16 +23,20 @@ export const getSession = (setUser, autoLogin = false) => {
   });
   temp = null;
 };
-export const login = () => {
-  // let res = auth.signInAnonymously();
-  // return res;
-  // //console.log("Login called");
-  window.location.href = "/auth?page=login&nexturl=" + window.location.pathname;
+export const login = (isReturn = false) => {
+  let temp = "/auth?page=login&nexturl=" + window.location.pathname;
+  if (!isReturn) window.location.href = temp;
+  else return temp;
 };
-
+export const signUp = (isReturn) => {
+  let temp = "/auth?page=register&nexturl=" + window.location.pathname;
+  if (!isReturn) window.location.href = temp;
+  else return temp;
+};
 export const logout = () => {
   localStorage.clear();
   auth.signOut();
+  window.location.href = "/";
 };
 export const handleUnAuthSession = () => {
   window.location.href = "/";

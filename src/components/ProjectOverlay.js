@@ -39,6 +39,28 @@ export const ProjectOverlay = ({
               </div>
             </li>
           ))}
+          <li>
+            <div
+              data-testid="project-overlay-action"
+              onClick={() => {
+                setProject("");
+                setProjectName("");
+                setShowProjectOverlay(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setProject("");
+                  setProjectName("");
+                  setShowProjectOverlay(false);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Select the task project"
+            >
+              {"None"}
+            </div>
+          </li>
         </ul>
       </div>
     )

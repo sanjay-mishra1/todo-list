@@ -1,9 +1,9 @@
 import { Paper } from "@mui/material";
 
-export const NoTask = ({ selectedProject }) => {
+export const NoTask = ({ selectedProject, isCompletedTaskView = false }) => {
   return (
     <>
-      {selectedProject === "TODAY" ? (
+      {selectedProject === "TODAY" && !isCompletedTaskView ? (
         <div
           style={{
             display: "flex",

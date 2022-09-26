@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Checkbox } from "./Checkbox";
 import { AddTask } from "./AddTask";
-import { useTasks } from "../hooks";
-import { collatedTasks } from "../constants";
+import { useTasks, useTodaysCompletedData } from "../hooks";
+import { collatedTasks, ViewType } from "../constants";
 import {
   getTitle,
   getCollatedTitle,
@@ -11,6 +11,9 @@ import {
 } from "../helpers";
 import { useSelectedProjectValue, useProjectsValue } from "../context";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Dialog,
   DialogContent,
@@ -18,19 +21,24 @@ import {
   Divider,
   ListItemButton,
   Paper,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import { NoTask } from "./NoTask";
-import { screenSizes } from "../util/helper";
-
+import { getViewTypeName, groupData, screenSizes } from "../util/helper";
+import { MdKeyboardArrowDown } from "react-icons/md";
+import { TaskViewTypeOverlay } from "./TaskViewTypeOverlay";
 export const Tasks = ({ uid }) => {
   const { selectedProject } = useSelectedProjectValue();
   const [viewType, setViewType] = useState("task");
   const { projects } = useProjectsValue();
   const { tasks, archivedTasks } = useTasks(selectedProject, uid);
   const [projectToEdit, setProjectToEdit] = useState(null);
+  const [groupType, setGroupType] = useState(ViewType[0].key);
+  const [showGroupTypeOverlay, setShowGroupTypeOverlay] = useState(null);
   let small = useMediaQuery(screenSizes.xs);
-  //console.log("Task component triggered");
+  const { completedTask } = useTodaysCompletedData(uid, selectedProject);
+  // console.log("completedTask", completedTask);
   const handleEditTask = (task) => {
     //console.log(task);
     let project = getProjectData(projects, task.projectId);
@@ -51,71 +59,94 @@ export const Tasks = ({ uid }) => {
     selectedProject &&
     !collatedTasksExist(selectedProject)
   ) {
-    projectName = getTitle(projects, selectedProject).name;
+    projectName = getTitle(projects, selectedProject)?.name ?? selectedProject;
   }
 
   useEffect(() => {
     document.title = `${projectName}: TodoList`;
   });
   //console.log(tasks);
-  const getProjectDetail = (projectId) => {
-    let project = getProjectData(projects, projectId);
-    if (!project) return <></>;
-    else
-      return (
-        <>
-          <span>{project.name}</span>
-          <div
-            className="sidebar__dot"
-            style={{ backgroundColor: project.color }}
-          ></div>
-        </>
-      );
-  };
-  const getTaskView = (tasks) => {
-    // console.log(tasks);
+
+  const getTaskView = (tasks, isCompleted) => {
+    let results;
+    if (groupType !== "none") {
+      if (isCompleted) {
+        let tempTask = JSON.parse(JSON.stringify(tasks));
+        archivedTasks.forEach((item) => {
+          if (!tasks.find((doc) => doc.id === item.id)) tempTask.push(item);
+        });
+
+        tasks = tempTask;
+      }
+
+      // console.log("task view", tasks, archivedTasks);
+      //filter task by project
+      results = groupData(tasks, groupType);
+
+      results = Object.keys(results)
+        .sort()
+        .reverse()
+        .reduce(function (result, key) {
+          result[key] = results[key];
+          return result;
+        }, {});
+    } else {
+      results = {};
+      if (isCompleted) {
+        let tempTask = JSON.parse(JSON.stringify(tasks));
+        archivedTasks.forEach((item) => {
+          if (!tasks.find((doc) => doc.id === item.id)) tempTask.push(item);
+        });
+
+        tasks = tempTask;
+      }
+      results[""] = { ...tasks };
+    }
+
+    // console.log("results", results);
     return (
       <>
-        {" "}
-        {tasks.map((task) => (
-          <li key={`${task.id}`}>
-            <ListItemButton style={{ padding: 0, borderRadius: 11 }}>
-              <Paper
-                onClick={() => handleEditTask(task)}
-                style={{ width: "100%", padding: 9, borderRadius: 11 }}
+        {Object.keys(results).length > 1 ? (
+          Object.keys(results).map((projectId) => {
+            let project = getProjectData(projects, projectId);
+            return (
+              <Accordion
+                defaultExpanded={true}
+                key={projectId}
+                style={{ backgroundColor: "transparent", boxShadow: "none" }}
               >
-                <div style={{ display: "flex" }}>
-                  <div style={{ display: "flex" }}>
-                    <Checkbox id={task.id} taskDesc={task.task} />
-                    <Divider
-                      className="mui-divider-custom"
-                      orientation="vertical"
-                    />
-                  </div>
-                  <div style={{ width: "78vh" }}>
-                    <div>
-                      {task.task.split("\n").map((text, index) => {
-                        return (
-                          <span key={text + index}>
-                            <span>{text}</span>
-                            {task.task.split("\n").length - 1 !== index && (
-                              <br />
-                            )}
-                          </span>
-                        );
-                      })}
-                    </div>
-                    <div className="project-detail-container">
-                      {getProjectDetail(task.projectId)}
-                    </div>
-                  </div>
-                </div>
-              </Paper>
-            </ListItemButton>
-          </li>
-        ))}
+                <AccordionSummary
+                  expandIcon={<MdKeyboardArrowDown />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  className="task-expand-text"
+                >
+                  <Typography>{project?.name ?? projectId}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <TaskView
+                    defaultProjectDetail={project}
+                    handleEditTask={handleEditTask}
+                    projects={projects}
+                    tasks={results[projectId]}
+                  />
+                </AccordionDetails>
+              </Accordion>
+            );
+          })
+        ) : (
+          <TaskView
+            handleEditTask={handleEditTask}
+            projects={projects}
+            tasks={tasks}
+          />
+        )}
+
         {(!tasks || !tasks.length) && (
-          <NoTask selectedProject={selectedProject} />
+          <NoTask
+            isCompletedTaskView={viewType !== "task"}
+            selectedProject={selectedProject}
+          />
         )}
       </>
     );
@@ -128,7 +159,17 @@ export const Tasks = ({ uid }) => {
           projectName={projectName}
           setViewType={setViewType}
           viewType={viewType}
+          isArchived={archivedTasks.length > 0 || completedTask.length > 0}
+          isPending={tasks.length > 0}
+          selectedProject={selectedProject}
         />
+
+        <TaskViewTypeOverlay
+          setShowViewTypeOverlay={setShowGroupTypeOverlay}
+          setViewTypeName={setGroupType}
+          showViewTypeOverlay={showGroupTypeOverlay}
+        />
+        <br />
         <div
           style={{
             overflow: "auto",
@@ -136,9 +177,39 @@ export const Tasks = ({ uid }) => {
             paddingBottom: 25,
           }}
         >
+          {(viewType === "task"
+            ? tasks.length > 0
+            : archivedTasks.length > 0) && (
+            <>
+              <Button
+                variant="outlined"
+                style={{
+                  color: "inherit",
+                  textTransform: "capitalize",
+                  display: "flex",
+                  cursor: "pointer",
+                  width: "fit-content",
+                  padding: "3px 7px 3px 9px",
+                  borderRadius: 12,
+                  alignItems: "center",
+                  marginLeft: "auto",
+                }}
+                onClick={(e) => setShowGroupTypeOverlay(e.currentTarget)}
+              >
+                <p>{getViewTypeName(groupType)}</p>
+                <img
+                  style={{ marginLeft: 6 }}
+                  src="/images/filter.svg"
+                  alt="filter view"
+                />
+              </Button>
+            </>
+          )}
           <ul className="tasks__list">
             {viewType === "task"
               ? getTaskView(tasks)
+              : selectedProject === "TODAY"
+              ? getTaskView(completedTask, true)
               : getTaskView(archivedTasks)}
           </ul>
           <AddTask uid={uid} />
@@ -171,7 +242,14 @@ export const Tasks = ({ uid }) => {
   );
 };
 
-const TaskHeader = ({ setViewType, viewType, projectName, isTaskFound }) => {
+const TaskHeader = ({
+  setViewType,
+  viewType,
+  projectName,
+  isArchived,
+  isPending,
+  selectedProject,
+}) => {
   return (
     <>
       <div
@@ -186,6 +264,7 @@ const TaskHeader = ({ setViewType, viewType, projectName, isTaskFound }) => {
           onClick={() => {
             setViewType("task");
           }}
+          disabled={!isPending && selectedProject === "PREVIOUS"}
           variant={viewType === "task" ? "contained" : "outlined"}
           style={{
             textTransform: "capitalize",
@@ -194,7 +273,13 @@ const TaskHeader = ({ setViewType, viewType, projectName, isTaskFound }) => {
             marginRight: 10,
           }}
         >
-          Pending
+          <span
+            onClick={() => {
+              setViewType("task");
+            }}
+          >
+            Pending
+          </span>
         </Button>
         <h2 style={{ color: "#2727279e" }} data-testid="project-name">
           {projectName}
@@ -202,6 +287,7 @@ const TaskHeader = ({ setViewType, viewType, projectName, isTaskFound }) => {
 
         <Button
           size="small"
+          disabled={!isArchived && selectedProject === "PREVIOUS"}
           onClick={() => {
             setViewType("archived");
           }}
@@ -215,8 +301,67 @@ const TaskHeader = ({ setViewType, viewType, projectName, isTaskFound }) => {
           Completed
         </Button>
       </div>
-      <br />
-      <br />
     </>
   );
+};
+
+const TaskView = ({
+  tasks,
+  projects,
+  handleEditTask,
+  defaultProjectDetail,
+}) => {
+  const getProjectDetail = (projectId) => {
+    let project = defaultProjectDetail
+      ? defaultProjectDetail
+      : getProjectData(projects, projectId);
+    if (!project) return <></>;
+    else
+      return (
+        <>
+          <span>{project.name}</span>
+          <div
+            className="sidebar__dot"
+            style={{ backgroundColor: project.color }}
+          ></div>
+        </>
+      );
+  };
+  return tasks.map((task) => (
+    <li key={`${task.id}`}>
+      <ListItemButton style={{ padding: 0, borderRadius: 11 }}>
+        <Paper
+          onClick={() => handleEditTask(task)}
+          style={{ width: "100%", padding: 9, borderRadius: 11 }}
+        >
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }}>
+              <Checkbox
+                isArchived={task.archived}
+                id={task.id}
+                taskDesc={task.task}
+                taskPriority={task.priority}
+              />
+              <Divider className="mui-divider-custom" orientation="vertical" />
+            </div>
+            <div style={{ width: "78vh" }}>
+              <div>
+                {task.task.split("\n").map((text, index) => {
+                  return (
+                    <span key={text + index}>
+                      <span>{text}</span>
+                      {task.task.split("\n").length - 1 !== index && <br />}
+                    </span>
+                  );
+                })}
+              </div>
+              <div className="project-detail-container">
+                {getProjectDetail(task.projectId)}
+              </div>
+            </div>
+          </div>
+        </Paper>
+      </ListItemButton>
+    </li>
+  ));
 };

@@ -5,16 +5,17 @@ import {
   FaRegCalendarAlt,
   FaRegCalendar,
   FaFolder,
+  FaRegCalendarMinus,
 } from "react-icons/fa";
 import Projects from "../Projects";
 import { useSelectedProjectValue } from "../../context";
 import AddProject from "../AddProject";
+import moment from "moment";
 
 export const Sidebar = ({ uid, openMenubar, handleMenubar }) => {
   const { setSelectedProject, selectedProject } = useSelectedProjectValue();
   const [active, setActive] = useState("today");
   const [showProjects, setShowProjects] = useState(true);
-
   return (
     <div
       className="sidebar"
@@ -57,12 +58,21 @@ export const Sidebar = ({ uid, openMenubar, handleMenubar }) => {
               }
             }}
           >
+            <span
+              style={{
+                position: "absolute",
+                fontSize: 8,
+                margin: "4px 0px 0px 3px",
+              }}
+            >
+              {moment().format("DD")}
+            </span>
             <span>
               <FaRegCalendar
                 color={selectedProject === "TODAY" ? "#5930d9" : null}
               />
             </span>
-            <span>Today</span>
+            <span style={{ marginLeft: 15 }}>Today</span>
           </div>
         </li>
 
@@ -91,6 +101,36 @@ export const Sidebar = ({ uid, openMenubar, handleMenubar }) => {
               <FaInbox color={selectedProject === "INBOX" ? "#5930d9" : null} />
             </span>
             <span>Uncategorized</span>
+          </div>
+        </li>
+
+        <li
+          data-testid="previous"
+          className={active === "previous" ? "active" : undefined}
+        >
+          <div
+            data-testid="inbox-action"
+            aria-label="Show inbox tasks"
+            tabIndex={0}
+            role="button"
+            onClick={() => {
+              setActive("previous");
+              if (openMenubar) handleMenubar();
+              setSelectedProject("PREVIOUS");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setActive("previous");
+                setSelectedProject("PREVIOUS");
+              }
+            }}
+          >
+            <span>
+              <FaRegCalendarMinus
+                color={selectedProject === "PREVIOUS" ? "#5930d9" : null}
+              />
+            </span>
+            <span>Previous</span>
           </div>
         </li>
 

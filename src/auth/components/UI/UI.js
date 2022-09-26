@@ -7,24 +7,24 @@ import Register from "../register/register";
 import "./UI.css";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useMediaQuery } from "@mui/material";
-import { screenSizes } from "../../../util/helper";
+import { getDefaultAuthPage, screenSizes } from "../../../util/helper";
+import { useLocation } from "react-router-dom";
 function UI() {
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState(getDefaultAuthPage());
   const [error, setError] = useState("");
   const [loader, setLoader] = useState(false);
   const xs = useMediaQuery(screenSizes.xs);
+  let location = useLocation();
 
+  React.useEffect(() => {
+    getUI();
+  }, [location]);
   const getUI = () => {
-    let tempPage = page;
-    let tempUrl = window.location.href.split("?");
-    if (tempUrl.length > 1) {
-      const url = new URLSearchParams(tempUrl[1]);
-      tempPage = url.get("page") ?? "login";
-      //console.log("url", url);
-    }
-    //console.log("page", tempPage, "tempUrl", tempUrl);
+    let tempPage = getDefaultAuthPage(page);
+
     switch (tempPage) {
       case "register":
+        document.title = "Register";
         return (
           <Register
             setLoader={setLoader}
@@ -33,10 +33,12 @@ function UI() {
           />
         );
       case "login":
+        document.title = "Login";
         return (
           <Login setPage={setPage} setError={setError} setLoader={setLoader} />
         );
       case "forgot":
+        document.title = "Forgot Password";
         return (
           <ForgotPassword
             setPage={setPage}
@@ -45,6 +47,7 @@ function UI() {
           />
         );
       case "anonymous":
+        document.title = "Anonymous Login";
         return (
           <AnonymousLogin
             setPage={setPage}
@@ -53,8 +56,9 @@ function UI() {
           />
         );
       default:
+        document.title = "Not found";
         return (
-          <p style={{ zIndex: 1 }}>
+          <p style={{ zIndex: 1, marginTop: "30%" }}>
             The requested page not found. Sorry for the inconvenience.
           </p>
         );
@@ -65,7 +69,7 @@ function UI() {
       {loader && (
         <LinearProgress
           color="primary"
-          style={{ zIndex: 1, margin: -23, marginTop: -24 }}
+          style={{ zIndex: 2, margin: -23, marginTop: -24 }}
         />
       )}
       <div className="container__auth a-container__auth" id="a-container">

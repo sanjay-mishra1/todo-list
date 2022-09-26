@@ -5,14 +5,22 @@ import { getProjectList } from "../store/actioncreator";
 import { Header } from "../components/layout/Header";
 import { Content } from "../components/layout/Content";
 import { ProjectsProvider, SelectedProjectProvider } from "../context";
+import DefaultHome from "../components/DefaultHome/DefaultHome";
 function Home(props) {
   const [user, setUser] = useState();
   const [openMenuBar, setOpenMenuBar] = useState(false);
   const [openCalendarView, setOpenCalendarView] = useState(false);
-  if (!user) getSession(setUser, true);
+  const [showView, setShowView] = useState(null);
+  if (!user) getSession(setUser, false);
   else {
-    //console.log("getting projects ", props);
-    if (!props.projectList) props.getProjectList();
+    // console.log("received user ", user);
+    if (!showView) {
+      if (!user.uid) setShowView("default");
+      else {
+        setShowView("task");
+        if (!props.projectList) props.getProjectList();
+      }
+    }
   }
 
   const [darkMode, setDarkMode] = useState(props.darkModeDefault);
@@ -24,37 +32,43 @@ function Home(props) {
     setOpenCalendarView(!openCalendarView);
     setOpenMenuBar(false);
   };
-  //console.log("loading ui", props);
   return (
     <React.Fragment>
       {user ? (
-        <SelectedProjectProvider>
-          <ProjectsProvider>
-            <main
-              data-testid="application"
-              style={{ display: "flex", flexDirection: "column" }}
-              className={darkMode ? "darkmode" : undefined}
-            >
-              <Header
-                user={user}
-                handleMenuBarOpen={handleMenuBarOpen}
-                calendarViewOpen={openCalendarView}
-                handleCalendarViewOpen={handleCalendarViewOpen}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-              />
+        showView === "task" ? (
+          <>
+            <SelectedProjectProvider>
+              <ProjectsProvider>
+                <main
+                  data-testid="application"
+                  style={{ display: "flex", flexDirection: "column" }}
+                  className={darkMode ? "darkmode" : undefined}
+                >
+                  <Header
+                    isMenuBarOpen={openMenuBar}
+                    user={user}
+                    handleMenuBarOpen={handleMenuBarOpen}
+                    calendarViewOpen={openCalendarView}
+                    handleCalendarViewOpen={handleCalendarViewOpen}
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                  />
 
-              <Content
-                openMenuBar={openMenuBar}
-                handleMenuBarOpen={handleMenuBarOpen}
-                openCalendarView={openCalendarView}
-                setOpenCalendarView={handleCalendarViewOpen}
-                user={user}
-                projectList={props.projectList}
-              />
-            </main>
-          </ProjectsProvider>
-        </SelectedProjectProvider>
+                  <Content
+                    openMenuBar={openMenuBar}
+                    handleMenuBarOpen={handleMenuBarOpen}
+                    openCalendarView={openCalendarView}
+                    setOpenCalendarView={handleCalendarViewOpen}
+                    user={user}
+                    projectList={props.projectList}
+                  />
+                </main>
+              </ProjectsProvider>
+            </SelectedProjectProvider>
+          </>
+        ) : (
+          <DefaultHome />
+        )
       ) : null}
     </React.Fragment>
   );

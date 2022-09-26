@@ -28,6 +28,23 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+/* Scroll bar custom style */
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px #c6c4c4;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #848484d1;
+  outline: 0px solid #ffffff;
+}
+
+/*  */
+
 /* Mixins ============================================ */
 /* Darkmode ============================================ */
 .darkmode header {
@@ -169,7 +186,7 @@ header nav div.settings ul li.settings__darkmode button svg {
 .sidebar li:hover .sidebar__project-delete {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
+  /* display: flex; */
 }
 .sidebar__project {
   cursor: pointer;
@@ -194,7 +211,7 @@ header nav div.settings ul li.settings__darkmode button svg {
   display: none;
 }
 .sidebar__project-delete svg {
-  color: #cacaca;
+  color: #7e7e7e;
 }
 .sidebar__project.active,
 .sidebar__project:hover {
@@ -325,13 +342,9 @@ header nav div.settings ul li.settings__darkmode button svg {
     rgba(0, 0, 0, 0.1) 0px 4px 11px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px,
     rgba(0, 0, 0, 0.1) 0px 4px 11px;
-  /* position: absolute; */
-  /* width: 100%; */
   z-index: 1;
   top: 85px;
-  /* border-radius: 3px; */
   z-index: 99;
-  /* width: 200px; */
   padding: 10px;
   top: 10px;
   right: 0;
@@ -346,8 +359,6 @@ header nav div.settings ul li.settings__darkmode button svg {
 }
 .project-delete-modal__inner button {
   width: "50px";
-  /* background-color: #db4c3f; */
-  /* color: #fff !important; */
   border: 1px solid transparent;
   margin-right: 5px;
   margin-top: 10px;
@@ -463,9 +474,18 @@ header nav div.settings ul li.settings__darkmode button svg {
   height: 16px;
   width: 16px;
   display: block;
-  border: 1px solid gray;
+  border: 2px solid gray;
   border-radius: 16px;
 }
+
+.checkbox .checkbox-tick {
+  visibility: hidden;
+}
+
+.checkbox:hover .checkbox-tick {
+  visibility: visible;
+}
+
 /* Add Task ============================================ */
 .add-task__overlay {
   background: rgba(102, 102, 102, 0.5);
@@ -758,4 +778,128 @@ header nav div.settings ul li.settings__darkmode button svg {
   background: #5930d9 !important;
   color: white !important;
   cursor: pointer;
+}
+
+.task-expand-text:hover {
+  background: #80808027;
+}
+
+/* Default Home */
+.home-main {
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  /* overflow: hidden; */
+  justify-content: center;
+  display: flex;
+  height: 100vh;
+  flex-wrap: wrap;
+}
+.home-left img {
+  width: 80%;
+}
+.home-left {
+  width: 50%;
+}
+.home-right img {
+  width: 15em;
+}
+
+.home-center {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 4%;
+  /* width: 50%; */
+}
+.home-center img {
+  width: 79px;
+}
+.home-center h1 {
+  font-size: 45px;
+  font-weight: 100;
+  margin-top: 10px;
+}
+.description {
+  max-width: 354px;
+  margin-top: 20px;
+}
+.interaction {
+  padding: 20px 0 60px;
+  max-height: 150px;
+  margin-top: 20px;
+}
+
+.home-main a {
+  color: white;
+  font-size: 1.6rem;
+  text-decoration: none;
+  margin-top: 20px;
+  text-transform: capitalize !important;
+}
+.home-center p {
+  margin: 20px 0 16px;
+  font-size: 24px;
+  font-weight: 100;
+  text-align: center;
+}
+.home-item-background {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  background: #774cff66;
+  border-radius: 50%;
+  margin-left: -7px;
+  margin-top: -4px;
+  z-index: -1;
+}
+.home-data-section {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+}
+.home-data-item {
+  width: 22em;
+  margin: 28px 26px 0px 0px;
+}
+.home-data {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+.home-data-section img {
+  width: 70px;
+  z-index: 1;
+}
+@media (max-width: 980px) {
+  .home-data-item {
+    width: 15em;
+  }
+}
+@media (max-width: 900px) {
+  .home-data-item {
+    width: 140px;
+    margin: 28px 26px 19px 0px;
+  }
+  .home-left {
+    width: auto;
+    /* margin-bottom: -7em; */
+    margin-top: 33px;
+  }
+  .home-left img {
+    width: 100%;
+  }
+  .home-center img {
+    width: 63px;
+  }
+  .home-center h1 {
+    font-size: 35px;
+    font-weight: 100;
+    margin-top: 10px;
+  }
+  .home-center p {
+    font-size: 20px;
+  }
+  .home-main a {
+    font-size: 18px;
+  }
 }

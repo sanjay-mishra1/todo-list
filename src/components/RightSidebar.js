@@ -121,6 +121,8 @@ const CalendarView = ({ selectedDate, setSelectedDate }) => {
       <StaticDatePicker
         displayStaticWrapperAs="desktop"
         openTo="day"
+        minDate={"2021-01-01"}
+        maxDate={moment().add(3, "years").format("YYYY") + "-12-31"}
         value={value}
         onChange={(newValue) => {
           setValue(newValue);

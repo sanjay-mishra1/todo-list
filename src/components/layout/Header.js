@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { FaPizzaSlice, FaUserAlt } from "react-icons/fa";
-import { MdAdd, MdClear, MdOutlineMenu, MdSearch } from "react-icons/md";
+import { FaUserAlt } from "react-icons/fa";
+import {
+  MdAdd,
+  MdArrowBack,
+  MdClear,
+  MdOutlineMenu,
+  MdSearch,
+} from "react-icons/md";
 import PropTypes from "prop-types";
 import { AddTask } from "../AddTask";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -8,6 +14,7 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import {
   Dialog,
   DialogContent,
+  Divider,
   IconButton,
   Tooltip,
   useMediaQuery,
@@ -20,6 +27,7 @@ export const Header = ({
   setDarkMode,
   user,
   handleMenuBarOpen,
+  isMenuBarOpen,
   handleCalendarViewOpen,
   calendarViewOpen,
 }) => {
@@ -37,7 +45,11 @@ export const Header = ({
               onClick={() => handleMenuBarOpen()}
               style={{ marginRight: 20, marginLeft: 2, fontSize: 20 }}
             >
-              <MdOutlineMenu color={darkMode ? "#ffffff" : "#000000"} />
+              {isMenuBarOpen ? (
+                <MdArrowBack color={darkMode ? "#ffffff" : "#000000"} />
+              ) : (
+                <MdOutlineMenu color={darkMode ? "#ffffff" : "#000000"} />
+              )}
             </IconButton>
           )}
           <img src="/images/logo.png" alt="TodoList" />
@@ -81,7 +93,7 @@ export const Header = ({
                 />
               </button>
             </li>
-            <li className="settings__darkmode">
+            {/* <li className="settings__darkmode">
               <button
                 data-testid="dark-mode-action"
                 aria-label="Darkmode on/off"
@@ -90,9 +102,9 @@ export const Header = ({
               >
                 <FaPizzaSlice color={darkMode ? "#ffffff" : "#000000"} />
               </button>
-            </li>
+            </li> */}
             {isVisible && (
-              <li className="settings__darkmode" style={{ marginLeft: 26 }}>
+              <li className="settings__darkmode" style={{ marginLeft: 2 }}>
                 <Tooltip title="Open Calendar View" disableInteractive>
                   <IconButton
                     onClick={() => handleCalendarViewOpen()}
@@ -154,15 +166,20 @@ export const Header = ({
           fullScreen={isVisible}
           onClose={() => setShowSearchDialog(false)}
         >
+          <div style={{ paddingRight: "2" }} variant="body2">
+            <p style={{ margin: "19px 0px -27px 27px" }}>Search Tasks</p>
+            <span>
+              <IconButton
+                style={{ float: "right" }}
+                onClick={() => setShowSearchDialog(false)}
+              >
+                <MdClear />
+              </IconButton>
+            </span>
+          </div>
+
+          <Divider></Divider>
           <DialogContent>
-            <IconButton
-              style={{ float: "right" }}
-              onClick={() => setShowSearchDialog(false)}
-            >
-              <MdClear />
-            </IconButton>
-            <br />
-            <br />
             <SearchTask uid={user.uid} />
           </DialogContent>
         </Dialog>
