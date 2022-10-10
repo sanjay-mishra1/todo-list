@@ -129,3 +129,13 @@ export const getDefaultAuthPage = (page) => {
   }
   return tempPage;
 };
+export const formatText = (text) => {
+  return text.split("\n").map((text, index) => {
+    return (
+      <span key={text + index}>
+        <span>{text}</span>
+        {text.split("\n").length - 1 !== index && <br />}
+      </span>
+    );
+  });
+};

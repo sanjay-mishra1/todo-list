@@ -12,6 +12,8 @@ import { getProjectData } from "../helpers";
 import { PriorityOverlay } from "./PriorityOverlay";
 import { IoMdFlag } from "react-icons/io";
 import { getPriorityColor } from "../util/helper";
+import Comments from "./Comments";
+import { deleteComments } from "../store/actioncreator";
 
 export const AddTask = ({
   showAddTaskMain = true,
@@ -132,6 +134,7 @@ export const AddTask = ({
     );
   };
   const deleteTask = () => {
+    console.log("Deleting task....", defaultTask.id);
     return database
       .collection("tasks")
       .doc(defaultTask.id)
@@ -141,6 +144,8 @@ export const AddTask = ({
         setProject("");
         setTaskDate("");
         hideParentBox();
+        //delete comments
+        deleteComments(defaultTask.id);
       });
   };
   const openAddTaskView = () => {
@@ -163,33 +168,37 @@ export const AddTask = ({
       data-testid="add-task-comp"
     >
       {showAddTaskMain && (
-        <div
-          className="add-task__shallow"
-          data-testid="show-main-action"
-          onClick={openAddTaskView}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") setShowMain(!showMain);
-          }}
-          tabIndex={0}
-          aria-label="Add task"
-          role="button"
-        >
-          <Paper
-            variant="outlined"
-            style={{
-              width: "100%",
-              padding: 9,
-              borderRadius: 11,
-              borderStyle: "dashed",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+        <>
+          <Comments id={selectedProject} user={uid} />
+
+          <div
+            className="add-task__shallow"
+            data-testid="show-main-action"
+            onClick={openAddTaskView}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") setShowMain(!showMain);
             }}
+            tabIndex={0}
+            aria-label="Add task"
+            role="button"
           >
-            <MdOutlineAddBox style={{ color: "#545454" }} />
-            <span className="add-task__text">Add Task</span>
-          </Paper>
-        </div>
+            <Paper
+              variant="outlined"
+              style={{
+                width: "100%",
+                padding: 9,
+                borderRadius: 11,
+                borderStyle: "dashed",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MdOutlineAddBox style={{ color: "#545454" }} />
+              <span className="add-task__text">Add Task</span>
+            </Paper>
+          </div>
+        </>
       )}
 
       {(showMain || showQuickAddTask) && (

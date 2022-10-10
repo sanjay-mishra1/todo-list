@@ -25,9 +25,15 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { NoTask } from "./NoTask";
-import { getViewTypeName, groupData, screenSizes } from "../util/helper";
+import {
+  formatText,
+  getViewTypeName,
+  groupData,
+  screenSizes,
+} from "../util/helper";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { TaskViewTypeOverlay } from "./TaskViewTypeOverlay";
+import Comments from "./Comments";
 export const Tasks = ({ uid }) => {
   const { selectedProject } = useSelectedProjectValue();
   const [viewType, setViewType] = useState("task");
@@ -226,7 +232,7 @@ export const Tasks = ({ uid }) => {
         >
           <DialogTitle>Update Task</DialogTitle>
           <Divider />
-          <DialogContent>
+          <DialogContent style={{ overflowX: "hidden" }}>
             <div style={!small ? { height: "70vh", width: "70vh" } : null}>
               <AddTask
                 defaultTask={projectToEdit}
@@ -234,6 +240,7 @@ export const Tasks = ({ uid }) => {
                 showAddTaskMain={false}
                 hideParentBox={() => setProjectToEdit(null)}
               />
+              <Comments id={projectToEdit.id} user={uid} />
             </div>
           </DialogContent>
         </Dialog>
@@ -345,16 +352,7 @@ const TaskView = ({
               <Divider className="mui-divider-custom" orientation="vertical" />
             </div>
             <div style={{ width: "78vh" }}>
-              <div>
-                {task.task.split("\n").map((text, index) => {
-                  return (
-                    <span key={text + index}>
-                      <span>{text}</span>
-                      {task.task.split("\n").length - 1 !== index && <br />}
-                    </span>
-                  );
-                })}
-              </div>
+              <div>{formatText(task.task)}</div>
               <div className="project-detail-container">
                 {getProjectDetail(task.projectId)}
               </div>

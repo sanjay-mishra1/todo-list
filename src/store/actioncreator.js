@@ -46,23 +46,25 @@ export const addProject = (field, successFunction) => (dispatch) => {
       successFunction();
     });
 };
-export const deleteProject = (docId, successFunction) => (dispatch) => {
-  database
-    .collection("projects")
-    .doc(docId)
-    .delete()
-    .then(() => {
-      //console.log("Deleted project successfully " + docId);
-      dispatch({
-        type: DELETE_PROJECT,
-        payload: docId,
+export const deleteProject =
+  (docId, projectId, successFunction) => (dispatch) => {
+    database
+      .collection("projects")
+      .doc(docId)
+      .delete()
+      .then(() => {
+        //console.log("Deleted project successfully " + docId);
+        dispatch({
+          type: DELETE_PROJECT,
+          payload: docId,
+        });
+        deleteComments(projectId);
+        successFunction();
+      })
+      .catch((error) => {
+        //console.log("Deleted project failed " + error);
       });
-      successFunction();
-    })
-    .catch((error) => {
-      //console.log("Deleted project failed " + error);
-    });
-};
+  };
 export const updateProjectDetails = (field, successFunction) => (dispatch) => {
   let docId = field.docId;
   delete field["docId"];
@@ -81,4 +83,17 @@ export const updateProjectDetails = (field, successFunction) => (dispatch) => {
     .catch((error) => {
       //console.log("Deleted project failed " + error);
     });
+};
+
+export const deleteComments = (id) => {
+  database
+    .collection("comments")
+    .where("id", "==", id)
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach(function (doc) {
+        doc.ref.delete();
+      });
+    })
+    .catch((error) => {});
 };

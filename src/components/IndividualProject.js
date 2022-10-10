@@ -12,8 +12,8 @@ const IndividualProject = (props) => {
   const { projects, setProjects } = useProjectsValue();
   const { setSelectedProject } = useSelectedProjectValue();
   // console.log(selectedProject);
-  const deleteProject = (docId) => {
-    props.deleteProject(docId, successFunction);
+  const deleteProject = (docId, projectId) => {
+    props.deleteProject(docId, projectId, successFunction);
   };
   const successFunction = () => {
     setProjects([...projects]);
@@ -62,7 +62,7 @@ const IndividualProject = (props) => {
                 variant="contained"
                 style={{ textTransform: "capitalize" }}
                 type="button"
-                onClick={() => deleteProject(project.docId)}
+                onClick={() => deleteProject(project.docId, project.projectId)}
               >
                 Delete
               </Button>
@@ -93,7 +93,8 @@ IndividualProject.propTypes = {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteProject: (field1, field2) => dispatch(deleteProject(field1, field2)),
+    deleteProject: (field1, field2, field3) =>
+      dispatch(deleteProject(field1, field2, field3)),
   };
 };
 

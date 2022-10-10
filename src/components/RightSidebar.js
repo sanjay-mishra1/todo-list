@@ -23,6 +23,7 @@ import { pickTextColorBasedOnBgColorAdvanced } from "../util/helper";
 import { MdDoneAll } from "react-icons/md";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { NoTask } from "./NoTask";
+import Comments from "./Comments";
 
 export default function RightSidebar({
   uid,
@@ -295,6 +296,7 @@ const AllTasks = ({ uid, date, projects, small }) => {
                 showAddTaskMain={false}
                 hideParentBox={() => setProjectToEdit(null)}
               />
+              <Comments id={projectToEdit.id} user={uid} />
             </div>
           </DialogContent>
         </Dialog>
